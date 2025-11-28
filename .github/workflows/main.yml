@@ -1,2 +1,24 @@
-- name: CodeChecker Static Analysis
-  uses: whisperity/CodeChecker-Action@v1.0.4
+job:
+  steps:
+    # Check YOUR project out!
+    - name: "Check out repository"
+      uses: actions/checkout@v2
+
+    # Prepare a build
+    - name: "Prepare build"
+      run: |
+        mkdir -pv Build
+        cd Build
+        cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF
+
+    # Run the analysis
+    - uses: whisperity/codechecker-analysis-action@v1
+      id: codechecker
+      with:
+        build-command: "cd ${{ github.workspace }}/Build; cmake --build ."
+
+    # Upload the results to the CI.
+    - uses: actions/upload-artifact@v2
+      with:
+        name: "CodeChecker Bug Reports"
+        path: ${{ steps.codechecker.outputs.result-html-dir }}
