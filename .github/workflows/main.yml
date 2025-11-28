@@ -1,0 +1,2 @@
+- name: CodeChecker Static Analysis
+  uses: whisperity/CodeChecker-Action@v1.0.4
